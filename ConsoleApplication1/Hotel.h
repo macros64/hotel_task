@@ -3,6 +3,12 @@
 #include <string>
 #include <iostream>
 #include <iomanip>
+#include <vector>
+
+#include "common.h"
+#include "Room.h"
+#include "Reservation.h"
+#include "PriceList.h"
 
 using namespace std;
 
@@ -10,13 +16,22 @@ enum StatusErr
 {
 	OK, Error
 };
+
+/*
+ * сущность отеля. мастер-объект.
+ */
 class Hotel {
 
 public:
-	Hotel() { Status = Error; } /*Конструктор класса по умолчанию*/
+
+	vector<Room> *rooms;				// номерной фонд отеля
+	vector<PriceList> *prices;			// цены на номера по категориям
+	vector<Reservation> *reservations;	// записи резервирования номеров
+
+	Hotel() { Status = Error; } //Конструктор класса по умолчанию
 	/*В констукторе задаём название гостиницы, количество мест всего, количество стандратных номеров, количество люксовых номеров,
 	количество одноместых номеров, количество двухместных номеров, количество двухместных номеров с раскладным диваном.*/
-	Hotel(string _name, int _countRooms, int _countStandardSingleRoom, int _countStandardDoubleRoom, int _countStandardDoubleAndHalfRoom,
+	Hotel(string _name, int _countStandardSingleRoom, int _countStandardDoubleRoom, int _countStandardDoubleAndHalfRoom,
 		int _countLuxurySingleRoom, int _countLuxuryDoubleRoom, int _countLuxuryDoubleAndHalfRoom);
 	~Hotel();
 	friend ostream& operator << (ostream &os, Hotel* &pr);
@@ -30,28 +45,26 @@ public:
 	int getCountLuxurySingleRoom();
 	int getCountLuxuryDoubleRoom();
 	int getCountLuxuryDoubleAndHalfRoom();
-	int getPriceStandardSingleRoom();
-	int getPriceStandardDoubleRoom();
-	int getPriceStandardDoubleAndHalfRoom();
-	int getPriceLuxurySingleRoom();
-	int getPriceLuxuryDoubleRoom();
-	int getPriceLuxuryDoubleAndHalfRoom();
+
+	float getPriceStandardSingleRoom();
+	float getPriceStandardDoubleRoom();
+	float getPriceStandardDoubleAndHalfRoom();
+	float getPriceLuxurySingleRoom();
+	float getPriceLuxuryDoubleRoom();
+	float getPriceLuxuryDoubleAndHalfRoom();
+
+	// метод возвращает список свободных комнат по заданным условиям: даты и тип
+	// если нет комнат нужного типа на нужные даты - берутся комнаты классом выше
+	vector<Room> getFreeRooms(RoomType _type /*startdate, enddate*/);
+
+	// метод выполняет резервирование комнаты на указанные даты и 
+	bool reserveRoom(Room &room, float pricePerNight, string owner /*startdate enddate*/);
 
 private:
 	int Status;
 	string name;
-	int countRooms;
-	int countStandardSingleRoom;
-	int countStandardDoubleRoom;
-	int countStandardDoubleAndHalfRoom;
-	int countLuxurySingleRoom;
-	int countLuxuryDoubleRoom;
-	int countLuxuryDoubleAndHalfRoom;
-	int priceStandardSingleRoom;
-	int priceStandardDoubleRoom;
-	int priceStandardDoubleAndHalfRoom;
-	int priceLuxurySingleRoom;
-	int priceLuxuryDoubleRoom;
-	int priceLuxuryDoubleAndHalfRoom;
+
+	int getRoomsCount(RoomType type); // внутренний метод подсчета количества комнат определеного типа
+	float getRoomPrice(RoomType type); // внутренний метод поиска цены за указанный тип номера
 };
 

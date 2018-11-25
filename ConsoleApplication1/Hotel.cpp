@@ -2,27 +2,42 @@
 #include "Hotel.h"
 
 
-Hotel::Hotel(string _name, int _countRooms, int _countStandardSingleRoom, int _countStandardDoubleRoom, int _countStandardDoubleAndHalfRoom,
-	int _countLuxurySingleRoom, int _countLuxuryDoubleRoom, int _countLuxuryDoubleAndHalfRoom) { /*Написала проверку, но думаю она не нужна так как это выбирается рандомно из заданного диапазона*/
-	if (_name == "" || _countRooms < 20 || _countRooms > 30) {
+Hotel::Hotel(string _name, int _countStandardSingleRoom, int _countStandardDoubleRoom, int _countStandardDoubleAndHalfRoom,
+	int _countLuxurySingleRoom, int _countLuxuryDoubleRoom, int _countLuxuryDoubleAndHalfRoom) 
+{ 
+	int romsCount = _countStandardSingleRoom + _countStandardDoubleRoom + _countStandardDoubleAndHalfRoom +
+		_countLuxurySingleRoom + _countLuxuryDoubleRoom + _countLuxuryDoubleAndHalfRoom;
+	// Написала проверку, но думаю она не нужна так как это выбирается рандомно из заданного диапазона
+	if (_name == "" || romsCount < 20 || romsCount > 30) 
+	{
 		Status = Error;
 	}
-	else {
+	else 
+	{
 		name = _name;
-		countRooms = _countRooms;
-		countStandardSingleRoom = _countStandardSingleRoom;
-		countStandardDoubleRoom = _countStandardDoubleRoom;
-		countStandardDoubleAndHalfRoom = _countStandardDoubleAndHalfRoom;
-		countLuxurySingleRoom = _countLuxurySingleRoom;
-		countLuxuryDoubleRoom = _countLuxuryDoubleRoom;
-		countLuxuryDoubleAndHalfRoom = _countLuxuryDoubleAndHalfRoom;
-		/*Из условия понятно, что для построения модели бронирования гостиницы цены на номера могут быть константами.*/
-		priceStandardSingleRoom = 70;
-		priceStandardDoubleRoom = 85;
-		priceStandardDoubleAndHalfRoom = 100;
-		priceLuxurySingleRoom = 85;
-		priceLuxuryDoubleRoom = 105;
-		priceLuxuryDoubleAndHalfRoom = 120;
+		int roomCounter = 1;
+
+		for (int i = 0; i < _countStandardSingleRoom; i++)
+			rooms->push_back(Room(RoomType::STD, roomCounter++));
+		for (int i = 0; i < _countStandardDoubleRoom; i++)
+			rooms->push_back(Room(RoomType::DBL, roomCounter++));
+		for (int i = 0; i < _countStandardDoubleAndHalfRoom; i++)
+			rooms->push_back(Room(RoomType::DBL_PLUS, roomCounter++));
+		for (int i = 0; i < _countLuxurySingleRoom; i++)
+			rooms->push_back(Room(RoomType::LUX, roomCounter++));
+		for (int i = 0; i < _countLuxuryDoubleRoom; i++)
+			rooms->push_back(Room(RoomType::LUX_DBL, roomCounter++));
+		for (int i = 0; i < _countLuxuryDoubleAndHalfRoom; i++)
+			rooms->push_back(Room(RoomType::LUX_PLUS, roomCounter++));
+		
+		// Из условия понятно, что для построения модели бронирования гостиницы цены на номера могут быть константами.
+		prices->push_back(PriceList(RoomType::STD,			70.0));
+		prices->push_back(PriceList(RoomType::DBL,			85.0));
+		prices->push_back(PriceList(RoomType::DBL_PLUS,		100.0));
+		prices->push_back(PriceList(RoomType::LUX,			85.0));
+		prices->push_back(PriceList(RoomType::LUX_DBL,		105.0));
+		prices->push_back(PriceList(RoomType::LUX_PLUS,		120.0));
+
 		Status = OK;
 		cout << "Гостиница с названием " << name << "для построения модели системы поддержки бронирования и заселения успешно создана!" << endl;
 	}
@@ -39,70 +54,101 @@ string Hotel::getName()
 }
 
 int Hotel::getCountRooms() {
-	if (Status == OK) return countRooms;
+	if (Status == OK) return rooms->size();
 	else return -1;
 }
 
 int Hotel::getCountStandardSingleRoom() {
-	if (Status == OK) return countStandardSingleRoom;
+	if (Status == OK) return getRoomsCount(RoomType::STD);
 	else return -1;
 }
 
 int Hotel::getCountStandardDoubleRoom() {
-	if (Status == OK) return countStandardDoubleRoom;
+	if (Status == OK) return getRoomsCount(RoomType::DBL);
 	else return -1;
 }
 
 
 int Hotel::getCountStandardDoubleAndHalfRoom() {
-	if (Status == OK) return countStandardDoubleAndHalfRoom;
+	if (Status == OK) return getRoomsCount(RoomType::DBL_PLUS);
 	else return -1;
 }
 
 int Hotel::getCountLuxurySingleRoom() {
-	if (Status == OK) return countLuxurySingleRoom;
+	if (Status == OK) return getRoomsCount(RoomType::LUX);
 	else return -1;
 }
 
 int Hotel::getCountLuxuryDoubleRoom() {
-	if (Status == OK) return countLuxuryDoubleRoom;
+	if (Status == OK) return getRoomsCount(RoomType::LUX_DBL);
 	else return -1;
 }
 
 
 int Hotel::getCountLuxuryDoubleAndHalfRoom() {
-	if (Status == OK) return countLuxuryDoubleAndHalfRoom;
+	if (Status == OK) return getRoomsCount(RoomType::LUX_PLUS);
 	else return -1;
 }
 
-int Hotel::getPriceStandardSingleRoom() {
-	if (Status == OK) return priceStandardSingleRoom;
+float Hotel::getPriceStandardSingleRoom() {
+	if (Status == OK) return getRoomPrice(RoomType::STD);
 	else return -1;
 }
 
-int Hotel::getPriceStandardDoubleRoom() {
-	if (Status == OK) return priceStandardDoubleRoom;
+float Hotel::getPriceStandardDoubleRoom() {
+	if (Status == OK) return getRoomPrice(RoomType::DBL);
 	else return -1;
 }
 
-int Hotel::getPriceStandardDoubleAndHalfRoom() {
-	if (Status == OK) return priceStandardDoubleAndHalfRoom;
+float Hotel::getPriceStandardDoubleAndHalfRoom() {
+	if (Status == OK) return getRoomPrice(RoomType::DBL_PLUS);
 	else return -1;
 }
 
-int Hotel::getPriceLuxurySingleRoom() {
-	if (Status == OK) return priceLuxurySingleRoom;
+float Hotel::getPriceLuxurySingleRoom() {
+	if (Status == OK) return getRoomPrice(RoomType::LUX);
 	else return -1;
 }
 
-int Hotel::getPriceLuxuryDoubleRoom() {
-	if (Status == OK) return priceLuxuryDoubleRoom;
+float Hotel::getPriceLuxuryDoubleRoom() {
+	if (Status == OK) return getRoomPrice(RoomType::LUX_DBL);
 	else return -1;
 }
 
-int Hotel::getPriceLuxuryDoubleAndHalfRoom() {
-	if (Status == OK) return priceLuxuryDoubleAndHalfRoom;
+float Hotel::getPriceLuxuryDoubleAndHalfRoom() {
+	if (Status == OK) return getRoomPrice(RoomType::LUX_PLUS);
 	else return -1;
+}
+
+vector<Room> Hotel::getFreeRooms(RoomType _type)
+{
+	return vector<Room>();
+}
+
+bool Hotel::reserveRoom(Room & room, float pricePerNight, string owner)
+{
+	return false;
+}
+
+int Hotel::getRoomsCount(RoomType type)
+{
+	int retVal = 0;
+	for (int i = 0; i < rooms->size(); i++)
+	{
+		Room r = rooms->at(i);
+		if (r.type == type) retVal++;
+	}
+	return retVal;
+}
+
+float Hotel::getRoomPrice(RoomType type)
+{
+	for (int i = 0; i < prices->size(); i++)
+	{
+		PriceList pl = prices->at(i);
+		if (pl.roomType == type) return pl.price;
+	}
+	return 0.0F;
 }
 
 ostream& operator << (ostream &os, Hotel* &pr)
@@ -113,18 +159,18 @@ ostream& operator << (ostream &os, Hotel* &pr)
 	}
 	cout << "ИНФОРМАЦИЯ О ГОСТИНИЦЕ:";
 	cout << "Название: " << pr->name << endl;
-	cout << "Количество стандартных одноместных номеров: " << pr->countStandardSingleRoom << endl;
-	cout << "Количество стандартных двухместных номеров: " << pr->countStandardDoubleRoom << endl;
-	cout << "Количество стандартных двухместных номеров с расскладным диваном: " << pr->countStandardDoubleAndHalfRoom << endl;
-	cout << "Количество люксовых одноместных номеров: " << pr->countLuxurySingleRoom << endl;
-	cout << "Количество люксовых двухместных номеров: " << pr->countLuxuryDoubleRoom << endl;
-	cout << "Количество люксовых двухместных номеров с расскладным диваном: " << pr->countLuxuryDoubleAndHalfRoom << endl;
-	cout << "Цена стандартных одноместных номеров: " << pr->priceStandardSingleRoom << endl;
-	cout << "Цена стандартных двухместных номеров: " << pr->priceStandardDoubleRoom << endl;
-	cout << "Цена стандартных двухместных номеров с расскладным диваном: " << pr->priceStandardDoubleAndHalfRoom << endl;
-	cout << "Цена люксовых одноместных номеров: " << pr->priceLuxurySingleRoom << endl;
-	cout << "Цена люксовых двухместных номеров: " << pr->priceLuxuryDoubleRoom << endl;
-	cout << "Цена люксовых двухместных номеров с расскладным диваном: " << pr->priceLuxuryDoubleAndHalfRoom << endl;
+	cout << "Количество стандартных одноместных номеров: " << pr->getCountStandardSingleRoom() << endl;
+	cout << "Количество стандартных двухместных номеров: " << pr->getCountStandardDoubleRoom() << endl;
+	cout << "Количество стандартных двухместных номеров с расскладным диваном: " << pr->getCountStandardDoubleAndHalfRoom() << endl;
+	cout << "Количество люксовых одноместных номеров: " << pr->getCountLuxurySingleRoom() << endl;
+	cout << "Количество люксовых двухместных номеров: " << pr->getCountLuxuryDoubleRoom() << endl;
+	cout << "Количество люксовых двухместных номеров с расскладным диваном: " << pr->getCountLuxuryDoubleAndHalfRoom() << endl;
+	cout << "Цена стандартных одноместных номеров: " << pr->getPriceStandardSingleRoom() << endl;
+	cout << "Цена стандартных двухместных номеров: " << pr->getPriceStandardDoubleRoom() << endl;
+	cout << "Цена стандартных двухместных номеров с расскладным диваном: " << pr->getPriceStandardDoubleAndHalfRoom() << endl;
+	cout << "Цена люксовых одноместных номеров: " << pr->getPriceLuxurySingleRoom() << endl;
+	cout << "Цена люксовых двухместных номеров: " << pr->getPriceLuxuryDoubleRoom() << endl;
+	cout << "Цена люксовых двухместных номеров с расскладным диваном: " << pr->getPriceLuxuryDoubleAndHalfRoom() << endl;
 	cout << "_______________________________________________________________" << endl;
 	cout << endl;
 }
