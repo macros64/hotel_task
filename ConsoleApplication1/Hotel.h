@@ -55,10 +55,10 @@ public:
 
 	// метод возвращает список свободных комнат по заданным условиям: даты и тип
 	// если нет комнат нужного типа на нужные даты - берутся комнаты классом выше
-	vector<Room> getFreeRooms(RoomType _type /*startdate, enddate*/);
+	vector<Room> getFreeRooms(RoomType _type, time_t startdate, time_t enddate);
 
 	// метод выполняет резервирование комнаты на указанные даты и 
-	bool reserveRoom(Room &room, float pricePerNight, string owner /*startdate enddate*/);
+	bool reserveRoom(Room &room, float pricePerNight, string owner, time_t startdate, time_t enddate);
 
 private:
 	int Status;

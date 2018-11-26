@@ -120,14 +120,18 @@ float Hotel::getPriceLuxuryDoubleAndHalfRoom() {
 	else return -1;
 }
 
-vector<Room> Hotel::getFreeRooms(RoomType _type)
+vector<Room> Hotel::getFreeRooms(RoomType _type, time_t startdate, time_t enddate)
 {
+	// поиск комнат
 	return vector<Room>();
 }
 
-bool Hotel::reserveRoom(Room & room, float pricePerNight, string owner)
+bool Hotel::reserveRoom(Room & room, float pricePerNight, string owner, time_t startdate, time_t enddate)
 {
-	return false;
+	// TODO: ideally we need to check if room is available
+	Reservation r(owner, room.number, pricePerNight, startdate, enddate);
+	reservations->push_back(r);
+	return true;
 }
 
 int Hotel::getRoomsCount(RoomType type)
