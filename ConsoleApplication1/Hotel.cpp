@@ -31,12 +31,12 @@ Hotel::Hotel(string _name, int _countStandardSingleRoom, int _countStandardDoubl
 			rooms->push_back(Room(RoomType::LUX_PLUS, roomCounter++));
 		
 		// Из условия понятно, что для построения модели бронирования гостиницы цены на номера могут быть константами.
-		prices->push_back(PriceList(RoomType::STD,			70.0));
-		prices->push_back(PriceList(RoomType::DBL,			85.0));
-		prices->push_back(PriceList(RoomType::DBL_PLUS,		100.0));
-		prices->push_back(PriceList(RoomType::LUX,			85.0));
-		prices->push_back(PriceList(RoomType::LUX_DBL,		105.0));
-		prices->push_back(PriceList(RoomType::LUX_PLUS,		120.0));
+		prices->insert(std::pair <RoomType, float>(STD, 70.0));
+		prices->insert(std::pair <RoomType, float>(DBL, 85.0));
+		prices->insert(std::pair <RoomType, float>(DBL_PLUS, 100.0));
+		prices->insert(std::pair <RoomType, float>(LUX, 85.0));
+		prices->insert(std::pair <RoomType, float>(LUX_DBL, 105.0));
+		prices->insert(std::pair <RoomType, float>(LUX_PLUS, 120.0));
 
 		Status = OK;
 		cout << "Гостиница с названием " << name << "для построения модели системы поддержки бронирования и заселения успешно создана!" << endl;
@@ -147,12 +147,10 @@ int Hotel::getRoomsCount(RoomType type)
 
 float Hotel::getRoomPrice(RoomType type)
 {
-	for (int i = 0; i < prices->size(); i++)
-	{
-		PriceList pl = prices->at(i);
-		if (pl.roomType == type) return pl.price;
-	}
-	return 0.0F;
+	if (prices->find(type) != prices->end())
+		return prices->at(type);
+	else 
+		return -1.0F;
 }
 
 ostream& operator << (ostream &os, Hotel* &pr)

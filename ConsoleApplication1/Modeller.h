@@ -10,7 +10,7 @@ class Modeller
 {
 private:
 
-	Hotel _hotel;
+	Hotel *_hotel;
 	void initHotel();
 public:
 	int K;				// общее количество номеров в отеле

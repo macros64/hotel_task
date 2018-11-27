@@ -4,11 +4,11 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
+#include <map>
 
 #include "common.h"
 #include "Room.h"
 #include "Reservation.h"
-#include "PriceList.h"
 
 using namespace std;
 
@@ -25,7 +25,7 @@ class Hotel {
 public:
 
 	vector<Room> *rooms;				// номерной фонд отеля
-	vector<PriceList> *prices;			// цены на номера по категориям
+	map <RoomType, float> *prices;
 	vector<Reservation> *reservations;	// записи резервирования номеров
 
 	Hotel() { Status = Error; } //Конструктор класса по умолчанию
