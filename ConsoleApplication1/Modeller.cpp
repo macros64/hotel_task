@@ -16,8 +16,25 @@ void Modeller::initHotel()
 	_hotel = new Hotel("test hotel", std, dbl, dblp, lux, luxd, luxp);
 }
 
+string Modeller::getRandomClientName()
+{
+	string s;
+	int len = 10;
+	char alphabet[] = "0123456789"
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		"abcdefghijklmnopqrstuvwxyz";
+
+	for (int i = 0; i < len; ++i) {
+		s += alphabet[rand() % (sizeof(alphabet) - 1)];
+	}
+
+	s += '\0';
+	return s;
+}
+
 Modeller::Modeller()
 {
+	initHotel();
 }
 
 
@@ -27,7 +44,24 @@ Modeller::~Modeller()
 
 void Modeller::doModelling()
 {
-	cout << "Моделирование в процессе" << endl;
+	int day = 0, clients = 0;
+	int clientsPerDay = clientsCount / M;
+	cout << "Начинаем моделирование." << endl;
+
+	time_t _now = time(NULL);
+	int seconds_per_day = 3600 * 24;
+
+	while (day < M && clients < clientsCount) {
+		time_t _start = _now + day * seconds_per_day;
+		time_t _end = _start + 2 * seconds_per_day;
+		string _owner = getRandomClientName();
+
+		vector<Room> rooms = _hotel->getFreeRooms(RoomType::STD, _start, _end);
+		Reservation r = _hotel->reserveRoom(rooms[0], RoomType::STD, _owner, _start, _end);
+
+		clientsCount++; // we need to increase overall clients count
+		cout << &r << endl;
+	}
 }
 
 void Modeller::printResults()

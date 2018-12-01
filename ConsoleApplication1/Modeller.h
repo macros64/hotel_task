@@ -12,6 +12,7 @@ private:
 
 	Hotel *_hotel;
 	void initHotel();
+	string getRandomClientName();
 public:
 	int K;				// общее количество номеров в отеле
 	int M;				// период моледирования в днях

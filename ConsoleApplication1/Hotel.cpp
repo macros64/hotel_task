@@ -126,12 +126,16 @@ vector<Room> Hotel::getFreeRooms(RoomType _type, time_t startdate, time_t enddat
 	return vector<Room>();
 }
 
-bool Hotel::reserveRoom(Room & room, float pricePerNight, string owner, time_t startdate, time_t enddate)
+Reservation Hotel::reserveRoom(Room & room, RoomType desiredRoomType, string owner, time_t startdate, time_t enddate)
 {
 	// TODO: ideally we need to check if room is available
+	float pricePerNight = getRoomPrice(room.type);
+	float typeDiscount = (room.type - desiredRoomType) * 0.1; // 10% discount per 1 room level
+	pricePerNight *= (1.0 - typeDiscount);
+
 	Reservation r(owner, room.number, pricePerNight, startdate, enddate);
 	reservations->push_back(r);
-	return true;
+	return r;
 }
 
 int Hotel::getRoomsCount(RoomType type)
