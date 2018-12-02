@@ -18,7 +18,7 @@ public:
 	int M;				// период моледирования в днях
 	int clientsCount;	// общее поличество клиентов
 
-	Modeller(int k, int m, int clients) { K = k, M = m, clientsCount = clients; }
+	Modeller(int k, int m, int clients);
 	Modeller();
 	~Modeller();
 

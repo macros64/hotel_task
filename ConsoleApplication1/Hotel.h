@@ -58,7 +58,7 @@ public:
 	vector<Room> getFreeRooms(RoomType _type, time_t startdate, time_t enddate);
 
 	// метод выполняет резервирование комнаты на указанные даты и 
-	Reservation reserveRoom(Room &room, RoomType desiredRoomType, string owner, time_t startdate, time_t enddate);
+	Reservation* reserveRoom(Room &room, RoomType desiredRoomType, string owner, time_t startdate, time_t enddate);
 
 private:
 	int Status;

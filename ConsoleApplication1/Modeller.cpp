@@ -2,6 +2,21 @@
 #include "Modeller.h"
 
 
+vector<string> namesList = { "Aaron", "Abraham", "Adam", "Adrian", "Aidan", "Alan", "Albert", "Alejandro", "Alex", "Alexander",
+"Alfred", "Andrew", "Angel", "Anthony", "Antonio", "Ashton", "Austin", "Ada", "Adelina", "Agatha",
+"Bailey", "Barbara", "Beatrice", "Belinda", "Brianna", "Bridjet", "Brooke", "Benjamin", "Bernard", "Blake",
+"Brandon", "Caleb", "Carter", "Chase", "Christian", "Clifford", "Cody", "Colin", "Curtis", "Cyrus",
+"Daisy", "Danielle", "Deborah", "Delia", "Destiny", "Diana", "Dorothy", "Donald", "Douglas", "Dylan",
+"Edward", "Elijah", "Eric", "Ethan", "Evan", "Gloria", "Gabriella", "Gabrielle", "Gladys", "Grace" };
+
+vector<string> surnamesList = { "Abramson", "Adamson", "Adderiy", "Addington", "Adrian", "Albertson", "Aldridge", "Allford", "Alsopp", "Anderson",
+						   "Blomfield", "Boolman", "Bootman", "Bosworth", "Bradberry", "Bradshaw", "Brickman", "Brooks", "Brown", "Bush",
+						   "Calhoun",	"Campbell", "Carey", "Carrington", 	"Carroll", 	"Carter", "Chandter", "Chapman", "Charlson", "Chesterton",
+						   "Daniels",	"Davidson",	"Day",	"Dean", "Derrick", "Dickinson",	"Dodson", "Donaldson",  "Donovan", "Douglas",
+						   "Faber", "Fane", "Farmer", "Farrell",  "Ferguson",	"Finch", "Fisher", "Fitzgerald", "Flannagan", "Flatcher",
+						   "Mathews",	"Mercer", "Michaelson", "Miers", "Miller", 	"Miln", "Milton", "Molligan", "Morrison", "Murphy" };
+
+
 void Modeller::initHotel()
 {
 	int std = 0, dbl = 0, dblp = 0, lux = 0, luxd = 0, luxp = 0;
@@ -18,18 +33,13 @@ void Modeller::initHotel()
 
 string Modeller::getRandomClientName()
 {
-	string s;
-	int len = 10;
-	char alphabet[] = "0123456789"
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-		"abcdefghijklmnopqrstuvwxyz";
+	return namesList.at(rand() % (namesList.size() - 1)) + " " + surnamesList.at(rand() % (surnamesList.size() - 1)) + "\0";
+}
 
-	for (int i = 0; i < len; ++i) {
-		s += alphabet[rand() % (sizeof(alphabet) - 1)];
-	}
-
-	s += '\0';
-	return s;
+Modeller::Modeller(int k, int m, int clients)
+{
+	K = k, M = m, clientsCount = clients;
+	initHotel();
 }
 
 Modeller::Modeller()
@@ -57,10 +67,10 @@ void Modeller::doModelling()
 		string _owner = getRandomClientName();
 
 		vector<Room> rooms = _hotel->getFreeRooms(RoomType::STD, _start, _end);
-		Reservation r = _hotel->reserveRoom(rooms[0], RoomType::STD, _owner, _start, _end);
+		Reservation *r = _hotel->reserveRoom(rooms[0], RoomType::STD, _owner, _start, _end);
 
-		clientsCount++; // we need to increase overall clients count
-		cout << &r << endl;
+		clients++; // we need to increase overall clients count
+		cout << r << endl;
 	}
 }
 

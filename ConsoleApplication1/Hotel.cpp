@@ -14,6 +14,10 @@ Hotel::Hotel(string _name, int _countStandardSingleRoom, int _countStandardDoubl
 	}
 	else 
 	{
+		rooms = new vector<Room>();
+		prices = new map<RoomType, float>();
+		reservations = new vector<Reservation>();
+
 		name = _name;
 		int roomCounter = 1;
 
@@ -31,12 +35,12 @@ Hotel::Hotel(string _name, int _countStandardSingleRoom, int _countStandardDoubl
 			rooms->push_back(Room(RoomType::LUX_PLUS, roomCounter++));
 		
 		// Из условия понятно, что для построения модели бронирования гостиницы цены на номера могут быть константами.
-		prices->insert(std::pair <RoomType, float>(STD, 70.0));
-		prices->insert(std::pair <RoomType, float>(DBL, 85.0));
-		prices->insert(std::pair <RoomType, float>(DBL_PLUS, 100.0));
-		prices->insert(std::pair <RoomType, float>(LUX, 85.0));
-		prices->insert(std::pair <RoomType, float>(LUX_DBL, 105.0));
-		prices->insert(std::pair <RoomType, float>(LUX_PLUS, 120.0));
+		prices->insert(make_pair(RoomType::STD, 70.0));
+		prices->insert(make_pair(RoomType::DBL, 85.0));
+		prices->insert(make_pair(RoomType::DBL_PLUS, 100.0));
+		prices->insert(make_pair(RoomType::LUX, 85.0));
+		prices->insert(make_pair(RoomType::LUX_DBL, 105.0));
+		prices->insert(make_pair(RoomType::LUX_PLUS, 120.0));
 
 		Status = OK;
 		cout << "Гостиница с названием " << name << "для построения модели системы поддержки бронирования и заселения успешно создана!" << endl;
@@ -122,19 +126,53 @@ float Hotel::getPriceLuxuryDoubleAndHalfRoom() {
 
 vector<Room> Hotel::getFreeRooms(RoomType _type, time_t startdate, time_t enddate)
 {
-	// поиск комнат
-	return vector<Room>();
+	vector<Room> retVal;
+
+	while (retVal.size() < 1 && _type <= RoomType::LUX_PLUS)
+	{
+		for (int i = 0; i < rooms->size(); i++) 
+		{
+			vector<Reservation> roomReservations;
+			Room room = rooms->at(i);
+			if (room.type == _type) // our room type
+			{
+				// search all reservations
+				for (int j = 0; j < reservations->size(); j++)
+					if (reservations->at(j).roomNumber == room.number)
+						roomReservations.push_back(reservations->at(i));
+
+				// analyze reservations
+				bool hasIntersection = false;
+				for (int j = 0; j < roomReservations.size(); j++)
+				{
+					Reservation reserv = roomReservations.at(j);
+					hasIntersection |= startdate >= reserv.startDate && startdate < reserv.endDate; // requested start date within some reservation period
+					hasIntersection |= enddate >= reserv.startDate && enddate < reserv.endDate; // requested end date within some reservation period
+					hasIntersection |= reserv.startDate <= startdate && reserv.endDate >= enddate; // requested interval includes reservation period
+					hasIntersection |= reserv.startDate >= startdate && reserv.endDate <= enddate; // reservation period includes requested interval
+				}
+
+				if (!hasIntersection)
+					retVal.push_back(room);
+			}
+		}
+		// if no rooms found we have to change searchable rom type
+		if (retVal.size() == 0)
+			_type = (RoomType)(_type + 1);
+	}
+
+	return retVal;
 }
 
-Reservation Hotel::reserveRoom(Room & room, RoomType desiredRoomType, string owner, time_t startdate, time_t enddate)
+Reservation* Hotel::reserveRoom(Room & room, RoomType desiredRoomType, string owner, time_t startdate, time_t enddate)
 {
 	// TODO: ideally we need to check if room is available
 	float pricePerNight = getRoomPrice(room.type);
 	float typeDiscount = (room.type - desiredRoomType) * 0.1; // 10% discount per 1 room level
 	pricePerNight *= (1.0 - typeDiscount);
 
-	Reservation r(owner, room.number, pricePerNight, startdate, enddate);
-	reservations->push_back(r);
+	Reservation *r = new Reservation(owner, room.number, pricePerNight, startdate, enddate);
+	reservations->push_back(*r);
 	return r;
 }
 
