@@ -70,7 +70,7 @@ void Modeller::doModelling()
 		Reservation *r = _hotel->reserveRoom(rooms[0], RoomType::STD, _owner, _start, _end);
 
 		clients++; // we need to increase overall clients count
-		cout << r << endl;
+		cout << *r << endl;
 	}
 }
 

@@ -171,7 +171,7 @@ Reservation* Hotel::reserveRoom(Room & room, RoomType desiredRoomType, string ow
 	float typeDiscount = (room.type - desiredRoomType) * 0.1; // 10% discount per 1 room level
 	pricePerNight *= (1.0 - typeDiscount);
 
-	Reservation *r = new Reservation(owner, room.number, pricePerNight, startdate, enddate);
+	Reservation *r = new Reservation(owner, &room, pricePerNight, startdate, enddate);
 	reservations->push_back(*r);
 	return r;
 }
