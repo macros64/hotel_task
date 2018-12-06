@@ -2,9 +2,11 @@
 /*
  * класс выполняющие моделирование работы отеля
  */
-
+#define _CRT_SECURE_NO_WARNINGS
 #include "common.h"
 #include "Hotel.h"
+
+
 
 class Modeller
 {

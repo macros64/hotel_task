@@ -139,7 +139,7 @@ vector<Room> Hotel::getFreeRooms(RoomType _type, time_t startdate, time_t enddat
 				// search all reservations
 				for (int j = 0; j < reservations->size(); j++)
 					if (reservations->at(j).roomNumber == room.number)
-						roomReservations.push_back(reservations->at(i));
+						roomReservations.push_back(reservations->at(j));
 
 				// analyze reservations
 				bool hasIntersection = false;
@@ -176,6 +176,19 @@ Reservation* Hotel::reserveRoom(Room & room, RoomType desiredRoomType, string ow
 	return r;
 }
 
+void Hotel::showStats(time_t date)
+{
+	cout << "Hotel load: "
+		<< "STD: " << getRoomsOccupied(RoomType::STD, date) << "/" << getRoomsCount(RoomType::STD) << " "
+		<< "DBL: " << getRoomsOccupied(RoomType::DBL, date) << "/" << getRoomsCount(RoomType::DBL) << " "
+		<< "DBL+: " << getRoomsOccupied(RoomType::DBL_PLUS, date) << "/" << getRoomsCount(RoomType::DBL_PLUS) << " "
+		<< "LUX: " << getRoomsOccupied(RoomType::LUX, date) << "/" << getRoomsCount(RoomType::LUX) << " "
+		<< "LUX2: " << getRoomsOccupied(RoomType::LUX_DBL, date) << "/" << getRoomsCount(RoomType::LUX_DBL) << " "
+		<< "LUX+: " << getRoomsOccupied(RoomType::LUX_PLUS, date) << "/" << getRoomsCount(RoomType::LUX_PLUS);
+
+
+}
+
 int Hotel::getRoomsCount(RoomType type)
 {
 	int retVal = 0;
@@ -193,6 +206,30 @@ float Hotel::getRoomPrice(RoomType type)
 		return prices->at(type);
 	else 
 		return -1.0F;
+}
+
+int Hotel::getRoomsOccupied(RoomType type, time_t date)
+{
+	// не знаю более вменяемого способа получить время начала дня
+	tm *day = localtime(&date);
+	day->tm_hour = 0;
+	day->tm_min = 0;
+	day->tm_sec = 0;
+
+	time_t start = mktime(day);
+	time_t end = start + 3600 * 24 - 1; // конец дня
+
+	int counter = 0;
+	for (int i = 0; i < reservations->size(); i++) // собственно цикл перебора резерваций
+	{
+		Reservation r = reservations->at(i);
+		if (r.roomType == type &&
+			r.startDate <= start &&
+			r.endDate >= end)
+			counter++;
+	}
+
+	return counter;
 }
 
 ostream& operator << (ostream &os, Hotel* &pr)

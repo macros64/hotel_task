@@ -1,5 +1,5 @@
 #pragma once
-
+#define _CRT_SECURE_NO_WARNINGS
 #include <string>
 #include <iostream>
 #include <iomanip>
@@ -60,11 +60,15 @@ public:
 	// метод выполняет резервирование комнаты на указанные даты и 
 	Reservation* reserveRoom(Room &room, RoomType desiredRoomType, string owner, time_t startdate, time_t enddate);
 
+	// сатистика по нагрузке отеля в указанную дату
+	void showStats(time_t date);
+
 private:
 	int Status;
 	string name;
 
 	int getRoomsCount(RoomType type); // внутренний метод подсчета количества комнат определеного типа
 	float getRoomPrice(RoomType type); // внутренний метод поиска цены за указанный тип номера
+	int getRoomsOccupied(RoomType type, time_t date); 
 };
 

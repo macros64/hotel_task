@@ -49,13 +49,11 @@ Reservation::~Reservation()
 ostream& operator<<(ostream& os, const Reservation &r)
 {
 	char *start_tm = new char[11], *end_tm = new char[11];
-	struct tm *_start = localtime(&r.startDate);
-	struct tm *_end = localtime(&r.endDate);
-	strftime(start_tm, 11, "%Y-%m-%d", _start);
-	strftime(end_tm, 11, "%Y-%m-%d", _end);
+	strftime(start_tm, 11, "%Y-%m-%d", localtime(&r.startDate));
+	strftime(end_tm, 11, "%Y-%m-%d", localtime(&r.endDate));
 	os << "Room " << r.roomNumber 
 		<<"("<< r.roomTypeStr <<")"
-		<< " was reserver for " << r.roomOwner 
+		<< " reserved for " << r.roomOwner 
 		<< " from " << start_tm
 		<< " to " << end_tm
 		<< ". Price: " << r.pricePerNight;

@@ -61,20 +61,46 @@ void Modeller::doModelling()
 	time_t _now = time(NULL);
 	int seconds_per_day = 3600 * 24;
 
-	while (day < M && clients < clientsCount) {
-		time_t _start = _now + day * seconds_per_day;
-		time_t _end = _start + 2 * seconds_per_day;
-		string _owner = getRandomClientName();
+	while (day < M && clients < clientsCount) 
+	{
+		while (clients < ((day + 1) * clientsPerDay))
+		{
+			int period = rand() % (M - day + 1);
 
-		vector<Room> rooms = _hotel->getFreeRooms(RoomType::STD, _start, _end);
-		Reservation *r = _hotel->reserveRoom(rooms[0], RoomType::STD, _owner, _start, _end);
+			time_t _start = _now + day * seconds_per_day;
+			time_t _end = _start + period * seconds_per_day;
+			string _owner = getRandomClientName();
 
-		clients++; // we need to increase overall clients count
-		cout << *r << endl;
+			vector<Room> rooms = _hotel->getFreeRooms(RoomType::STD, _start, _end);
+			if (rooms.size() > 0)
+			{
+				Reservation *r = _hotel->reserveRoom(rooms[0], RoomType::STD, _owner, _start, _end);
+				cout << *r << endl;
+			}
+			else
+			{
+				cout << "No rooms\n";
+			}
+
+			clients++; // we need to increase overall clients count
+			
+		}
+		day++;
 	}
 }
 
 void Modeller::printResults()
 {
 	cout << "Результаты моделирования" << endl;
+	time_t date = time(NULL);
+	char *strdate = new char[11];
+
+	for (int i = 0; i < M; i++)
+	{
+		strftime(strdate, 11, "%Y-%m-%d", localtime(&date));
+		cout << strdate << " ";
+		_hotel->showStats(date);
+		cout << endl;
+		date += 3600 * 24;
+	}
 }
